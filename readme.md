@@ -19,7 +19,7 @@ for '@tags' as most text editors will already have a built-in system to facilita
 
 ## Installation
 
-Download ... and run the script.
+Download the [ZIP](https://github.com/hi5/todo-pt/archive/master.zip), unpack and run the script.
 You should be able to [#include](http://ahkscript.org/docs/commands/_Include.htm) the script
 in your main AutoHotkey script without any problems as the Hotkeys and Hotstrings are context
 sensitive and all settings are stored in one Object and apart from the [AHK Group](http://ahkscript.org/docs/commands/GroupAdd.htm)
@@ -66,7 +66,7 @@ Tip: You can find more Unicode characters at http://unicode-table.com/en/
 * CTRL+D again will put it back in pending mode, changes mark and removes @done + time
 * CTRL+M will mark the task as cancelled, changes mark and adds @cancelled + time
 * CTRL+M again will put it back in pending mode, changes mark and remove @cancelled + time
-* CTRL+SHIFT+A will archive all tasks, note there two methods to do this which you can define in the (Settings)[#settings]
+* CTRL+SHIFT+S will archive all tasks, note there two methods to do this which you can define in the (Settings)[#settings]
 
 * Alt+T will add the @today tag at the end of the task
 * Alt+S will add the @start tag + time at the end of the task
@@ -137,3 +137,8 @@ Please consult your text editors documentation for instructions on how to instal
 ## License
 
 Licensed under the MIT License, see [copying.txt](COPYING.TXT)
+
+## Demo
+
+![Quick demo](https://raw.github.com/hi5/_resources/master/todo-pt-demo.gif)
+
