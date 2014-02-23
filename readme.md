@@ -1,4 +1,4 @@
-# [todo-pt](https://github.com/hi5/todo-pt) - Universal TODO lists for Text Editors (based on PlainTasks)
+﻿# [todo-pt](https://github.com/hi5/todo-pt) - Universal TODO lists for Text Editors (based on PlainTasks)
 
 __todo-pt is (loosly) based on the [PlainTasks](https://github.com/aziz/PlainTasks) todo-list plugin for Sublime Text editor.__
 
@@ -47,7 +47,7 @@ Windows to [show the file extensions](http://www.bleepingcomputer.com/tutorials/
 Tip: You can change or add your own extensions in the filenames object which is defined at the start of objTodo{}
 
 **Note:** If you want to use Unicode characters for your open, cancelled and closed tasks
-"icons" (such as ? ? ?) you need to save your TODO file using Unicode encoding. Otherwise
+"icons" (such as ❑ ✔ ✘) you need to save your TODO file using Unicode encoding. Otherwise
 stick to regular ASCII characters, see settings below.
 
 Tip: You can find more Unicode characters at http://unicode-table.com/en/
@@ -86,7 +86,7 @@ These tags can be easily changed, see settings.
 
 ### Hotstrings
 
-* -- followed by TAB will insert a divider line --- ? ------------------------------
+* -- followed by TAB will insert a divider line --- ✄ ------------------------------
 
 ## Settings
 
