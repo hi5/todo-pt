@@ -66,7 +66,7 @@ Tip: You can find more Unicode characters at http://unicode-table.com/en/
 * CTRL+D again will put it back in pending mode, changes mark and removes @done + time
 * CTRL+M will mark the task as cancelled, changes mark and adds @cancelled + time
 * CTRL+M again will put it back in pending mode, changes mark and remove @cancelled + time
-* CTRL+SHIFT+S will archive all tasks, note there two methods to do this which you can define in the (Settings)[#settings]
+* CTRL+SHIFT+S will archive all tasks, note there two methods to do this which you can define in the [Settings](#settings)
 
 * Alt+T will add the @today tag at the end of the task
 * Alt+S will add the @start tag + time at the end of the task

@@ -1,7 +1,7 @@
 ﻿/*
 Name          : todo-pt - v0.1 - Universal TODO lists for Text Editors based on PlainTasks(1)
 Source        : https://github.com/hi5/todo-pt
-AHKScript     : TODO :-)
+AHKScript     : http://ahkscript.org/boards/viewtopic.php?f=6&t=2366
 Documentation : See readme.md at GH
 License       : MIT see COPYING.txt
 Note          : Some editors have plugins / addons which may proof more usable as they
