@@ -1,5 +1,5 @@
 ﻿/*
-Name          : todo-pt - v0.1 - Universal TODO lists for Text Editors based on PlainTasks(1)
+Name          : todo-pt - v0.2 - Universal TODO lists for Text Editors based on PlainTasks(1)
 Source        : https://github.com/hi5/todo-pt
 AHKScript     : http://ahkscript.org/boards/viewtopic.php?f=6&t=2366
 Documentation : See readme.md at GH
@@ -83,7 +83,9 @@ Hotkey, IfWinActive
 
 #IfWinActive ahk_group ahkgroupTodo
 :*:--	::
-todo_SendClip(objTodo.text_line,objTodo)
+	todo_ClipSave()
+	todo_SendClip(objTodo.text_line)
+	todo_ClipSave(1)
 Return
 #IfWinActive 
 
@@ -106,7 +108,7 @@ Loop, parse, Clipboard, `n, `r
 	}
 If !InStr(clipboard,todo_objGetValue("text_archive",objTodo))
 	objTodo.active_log .= "`n`n" objTodo.text_archive "`n"
-todo_SendClip(objTodo.active_log objTodo.archive_log,objTodo)
+todo_SendClip(objTodo.active_log objTodo.archive_log)
 Sleep % objTodo.delay
 objTodo.active_log:="", objTodo.archive_log:=""
 todo_ClipSave(1)
@@ -125,37 +127,33 @@ todo_hotkey_task_new:
 Return	
 
 todo_hotkey_task_start:
-	todo_Command(objTodo.text_start,objTodo)
+	todo_Command(objTodo.text_start)
 Return
 
 todo_hotkey_task_done:
-	todo_Command(objTodo.text_done,objTodo)
+	todo_Command(objTodo.text_done)
 Return
 
 todo_hotkey_task_today:
 	Send {end}{space}
-	todo_SendClip(objTodo.text_today,objTodo)
+	todo_SendClip(objTodo.text_today)
 	Send {home}
 Return
 
 todo_hotkey_task_cancel:
-	todo_Command(objTodo.text_cancelled,objTodo)
+	todo_Command(objTodo.text_cancelled)
 Return	
 
-todo_GetLine:
-Send % objTodo.hotkey_getline ; {home}{shift down}{end}{shift up}^x
-Sleep % objTodo.delay
-Return
-
-todo_Command(CommandText,objTodo) {
-	todo_GetLine(objTodo.delay,objTodo)
+todo_Command(CommandText) {
+	global objTodo
+	todo_GetLine()
 	If InStr(Clipboard, CommandText)
 		{
 		 Clipboard:=RTrim(SubStr(Clipboard,1,InStr(Clipboard,CommandText))," @")
 		 Sleep % objTodo.delay
 		 StringReplace, Clipboard, Clipboard, % objTodo.mark_done, % objTodo.mark_open
 		 StringReplace, Clipboard, Clipboard, % objTodo.mark_cancelled, % objTodo.mark_open
-		 todo_SendClip(Clipboard,objTodo)
+		 todo_SendClip(Clipboard)
 		 Send {end}
 		} 
 	 Else
@@ -182,18 +180,20 @@ todo_Command(CommandText,objTodo) {
 			 FormatTime, dtimenow, A_Now, % objTodo.date_format
 			 CommandText:="@done" dtimenow " " objTodo.text_time " "
 			}
-		 todo_SendClip(RTrim(clipboard) " " CommandText dtime,objTodo)
+		 todo_SendClip(RTrim(clipboard) " " CommandText dtime)
 		}
 	 todo_ClipSave(1)
 	}
 
-todo_GetLine(delay,objTodo) {
+todo_GetLine() {
+	 global objTodo
 	 todo_ClipSave()
 	 Send {home}{shift down}{end}{shift up}^x
 	 Sleep % objTodo.delay
 	}
 
-todo_SendClip(text,objTodo) {
+todo_SendClip(text) {
+	 global objTodo
 	 Clipboard:=text
 	 SendInput, ^v
 	 Sleep % objTodo.delay
