@@ -1,5 +1,5 @@
 ﻿/*
-Name          : todo-pt - v0.2 - Universal TODO lists for Text Editors based on PlainTasks(1)
+Name          : todo-pt - v0.3 - Universal TODO lists for Text Editors based on PlainTasks(1)
 Source        : https://github.com/hi5/todo-pt
 AHKScript     : http://ahkscript.org/boards/viewtopic.php?f=6&t=2366
 Documentation : See readme.md at GH
@@ -115,15 +115,24 @@ todo_ClipSave(1)
 Return
 
 todo_hotkey_new_project:
-	Send % "{enter}" objTodo.mark_project " Project:{enter}" objTodo.mark_indent objTodo.mark_open "{space}"
+	todo_ClipSave()
+	Send % "{end}" 
+	todo_SendClip("`n" Trim(objTodo.mark_project,"{}") "Project:`n" objTodo.mark_indent objTodo.mark_open " ")
+	todo_ClipSave(1)
 Return	
 
 todo_hotkey_make_task:
-	Send % "{home}" objTodo.mark_indent objTodo.mark_open "{space}"
+	todo_ClipSave()
+	Send % "{home}" 
+	todo_SendClip(objTodo.mark_indent objTodo.mark_open " ")
+	todo_ClipSave(1)
 Return	
 
 todo_hotkey_task_new:
-	Send % "{end}{enter}" objTodo.mark_open "{space}"
+	todo_ClipSave()
+	Send % "{end}{ctrl up}{shift up}{alt up}{enter}"
+	todo_SendClip(objTodo.mark_open " ")
+	todo_ClipSave()
 Return	
 
 todo_hotkey_task_start:
@@ -132,12 +141,13 @@ Return
 
 todo_hotkey_task_done:
 	todo_Command(objTodo.text_done)
+	Send % "{home}"
 Return
 
 todo_hotkey_task_today:
-	Send {end}{space}
+	Send % "{end}{space}"
 	todo_SendClip(objTodo.text_today)
-	Send {home}
+	Send % "{home}"
 Return
 
 todo_hotkey_task_cancel:
