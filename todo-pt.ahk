@@ -1,5 +1,5 @@
 ﻿/*
-Name          : todo-pt - v0.3 - Universal TODO lists for Text Editors based on PlainTasks(1)
+Name          : todo-pt - v0.4 - Universal TODO lists for Text Editors based on PlainTasks(1)
 Source        : https://github.com/hi5/todo-pt
 AHKScript     : http://ahkscript.org/boards/viewtopic.php?f=6&t=2366
 Documentation : See readme.md at GH
@@ -60,6 +60,7 @@ objTodo := {filenames: {1: ".todo", 2: ".todolist", 3: ".tasks", 4: ".taskpaper"
 	, hotkey_task_today: "!t"
 	, hotkey_archive: "^+s"
 	, hotkey_make_task: "^Enter"
+	, hotkey_help: "#F1"
 	, hotkey_new_project: "^p"
 	, hotkey_getline: "{home}{shift down}{end}{shift up}^x"  ; for some editors ^x will suffice
 	, active_log : ""
@@ -77,6 +78,7 @@ Hotkey, % objTodo.hotkey_task_today , todo_hotkey_task_today
 Hotkey, % objTodo.hotkey_make_task  , todo_hotkey_make_task
 Hotkey, % objTodo.hotkey_new_project, todo_hotkey_new_project
 Hotkey, % objTodo.hotkey_archive    , todo_hotkey_archive
+Hotkey, % objTodo.hotkey_help       , todo_hotkey_help
 Hotkey, IfWinActive
 
 ; Return ; Return from todo-pt-label - uncomment if you wish to include todo-pt in your main script
@@ -88,6 +90,12 @@ Hotkey, IfWinActive
 	todo_ClipSave(1)
 Return
 #IfWinActive 
+#IfWinExist todohelper ahk_class AutoHotkeyGUI
+Esc::
+Gui, todo_pthelp:destroy
+Return
+#IfWinExist 
+
 
 todo_hotkey_archive:
 todo_ClipSave()
@@ -154,6 +162,10 @@ todo_hotkey_task_cancel:
 	todo_Command(objTodo.text_cancelled)
 Return	
 
+todo_hotkey_help:
+	todo_Help()
+Return
+
 todo_Command(CommandText) {
 	global objTodo
 	todo_GetLine()
@@ -161,8 +173,7 @@ todo_Command(CommandText) {
 		{
 		 Clipboard:=RTrim(SubStr(Clipboard,1,InStr(Clipboard,CommandText))," @")
 		 Sleep % objTodo.delay
-		 StringReplace, Clipboard, Clipboard, % objTodo.mark_done, % objTodo.mark_open
-		 StringReplace, Clipboard, Clipboard, % objTodo.mark_cancelled, % objTodo.mark_open
+		 todo_CheckMark(objTodo.mark_open)
 		 todo_SendClip(Clipboard)
 		 Send {end}
 		} 
@@ -174,7 +185,7 @@ todo_Command(CommandText) {
 		 	mark:=objTodo.mark_cancelled
 		 else if (CommandText = objTodo.text_start)
 		 	mark:=objTodo.mark_open
-		 StringReplace, Clipboard, Clipboard, % objTodo.mark_open, %mark%
+		 todo_CheckMark(mark)
 		 Sleep % objTodo.delay
 		 FormatTime, dtime, A_Now, % objTodo.date_format
 		 if (InStr(Clipboard,todo_objGetValue("text_start",objTodo)) and (CommandText <> objTodo.text_cancelled))
@@ -188,11 +199,19 @@ todo_Command(CommandText) {
 			 ; convert minutes to hours:minutes, wrapped in ()
 			 dtime:="(" (SubStr("0" Round(dtime) // 60,-1)) ":" (SubStr("0" Mod(Round(dtime), 60),-1)) " hh:mm)"
 			 FormatTime, dtimenow, A_Now, % objTodo.date_format
-			 CommandText:="@done" dtimenow " " objTodo.text_time " "
+			 CommandText:=objTodo.text_done dtimenow " " objTodo.text_time " "
 			}
 		 todo_SendClip(RTrim(clipboard) " " CommandText dtime)
 		}
 	 todo_ClipSave(1)
+	}
+
+todo_CheckMark(mark) {
+	global objTodo
+	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_done "\E\s*","$1")
+	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_open "\E\s*","$1")
+	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_cancelled "\E\s*","$1")
+	Clipboard:=RegExReplace(Clipboard,"^(\s*)","$1" mark " ")
 	}
 
 todo_GetLine() {
@@ -229,6 +248,31 @@ todo_ClipSave(action=0) {
 	 else if (action = 2) ; clear ClipSave
 		 ClipSave:=""
 	}
+
+todo_Help() {
+	global objTodo
+	Gui, todo_pthelp:destroy
+	Gui, todo_pthelp:new, +LastFound +AlwaysOnTop -Caption +ToolWindow
+	Gui, todo_pthelp:Color, black,black
+	WinSet, Transparent, 150
+	Gui, todo_pthelp:Font,s20 cYellow bold,Calibri
+	Gui, todo_pthelp:add, text, x220 y10 , todo-pt // help
+	Gui, todo_pthelp:Font,s14 cWhite bold,Calibri
+	Gui, todo_pthelp:add, text, x20 yp+50, % objTodo.hotkey_new_project "`t= add a new Project + first task"
+	Gui, todo_pthelp:add, text, x20 yp+20, % objTodo.hotkey_task_new 	"`t= add a new task on the next line"
+	Gui, todo_pthelp:add, text, x20 yp+20, % objTodo.hotkey_make_task 	"`t= mark current line as a task"
+	Gui, todo_pthelp:add, text, x20 yp+40, % objTodo.hotkey_task_done   "`t= mark task as done / back in pending mode"
+	Gui, todo_pthelp:add, text, x20 yp+20, % objTodo.hotkey_task_cancel "`t= mark as cancelled / back in pending mode"
+	Gui, todo_pthelp:add, text, x20 yp+20, % objTodo.hotkey_archive		"`t= archive all completed tasks"
+	Gui, todo_pthelp:add, text, x20 yp+20, % objTodo.hotkey_task_start	"`t= add / remove @start tag"
+	Gui, todo_pthelp:add, text, x20 yp+20, % objTodo.hotkey_task_today	"`t= add / remove @today tag"
+	Gui, todo_pthelp:add, text, x20 yp+40, % objTodo.hotkey_help		"`t= show help :-)"
+	Gui, todo_pthelp:add, text, x20 yp+20, Esc `t= close help window
+	
+	Gui, todo_pthelp:show, w600 h340, todohelper
+	Return
+	}
+
 
 ; --- third party functions --- 
 
