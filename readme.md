@@ -1,4 +1,6 @@
-﻿# [todo-pt](https://github.com/hi5/todo-pt) - Universal TODO lists for Text Editors (based on PlainTasks)
+﻿# [todo-pt](https://github.com/hi5/todo-pt) <sub>v0.5</sub>
+
+## Universal TODO lists for Text Editors (based on PlainTasks)
 
 __todo-pt is (loosly) based on the [PlainTasks](https://github.com/aziz/PlainTasks) todo-list plugin for Sublime Text editor.__
 
@@ -63,9 +65,11 @@ Tip: You can find more Unicode characters at http://unicode-table.com/en/
 **Managing tasks:**
 
 * CTRL+D marks a task as done, changes mark to checked and adds @done + time
-* CTRL+D again will put it back in pending mode, changes mark and removes @done + time
+* CTRL+D again will put it back in TODO (open) mode, changes mark and removes @done + time
+* CTRL+SHIFT+D marks a task as in pending, changes mark and adds @pending + time
+* CTRL+SHIFT+D again will put it back in TODO (open) mode, changes mark and removes @pending + time
 * CTRL+M will mark the task as cancelled, changes mark and adds @cancelled + time
-* CTRL+M again will put it back in pending mode, changes mark and remove @cancelled + time
+* CTRL+M again will put it back in TODO (open) mode, changes mark and remove @cancelled + time
 * CTRL+SHIFT+S will archive all tasks, note there two methods to do this which you can define in the [Settings](#settings)
 
 * Alt+T will add the @today tag at the end of the task
@@ -81,6 +85,7 @@ todo-pt uses the following default @tags:
 * @start
 * @time - if you add a @start tag and later mark the task as @done the @time tag is automatically added as calculating the time spent on task
 * @today
+* @pending (task is done but awaiting confirmation)
 
 These tags can be easily changed, see settings.
 
@@ -95,14 +100,14 @@ and are only briefly addressed here:
 
 **marks & texts**
 
-* mark_[open, done, cancelled, project]: "Icons" used to indicate the status of a task
+* mark_[open, done, pending, cancelled, project]: "Icons" used to indicate the status of a task
 * mark_indent: depending on your preference you can use to enable/disable automatic indentation of new tasks
-* text_[done, cancelled, today, start, time]: @tags used to mark the status of tasks
+* text_[done, pending, cancelled, today, start, time]: @tags used to mark the status of tasks
 * text_[line, archive]: text used to display a divider line and archive indicator
 
 **hotkeys**
 
-* hotkey_...[done, cancel, new, start, today, archive, make_task, new_project]: hotkeys to manage tasks and projects
+* hotkey_...[done, pending, cancel, new, start, today, archive, make_task, new_project]: hotkeys to manage tasks and projects
 * hotkey_getline: for some editors ^x will suffice
 
 **date & time**

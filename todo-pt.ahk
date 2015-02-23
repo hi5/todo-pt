@@ -1,5 +1,5 @@
 ﻿/*
-Name          : todo-pt - v0.4 - Universal TODO lists for Text Editors based on PlainTasks(1)
+Name          : todo-pt - v0.5 - Universal TODO lists for Text Editors based on PlainTasks(1)
 Source        : https://github.com/hi5/todo-pt
 AHKScript     : http://ahkscript.org/boards/viewtopic.php?f=6&t=2366
 Documentation : See readme.md at GH
@@ -30,10 +30,12 @@ objTodo := {filenames: {1: ".todo", 2: ".todolist", 3: ".tasks", 4: ".taskpaper"
 		; If you want to use # ! ^ + wrapping these in {} is mandatory
 	, mark_open: "❑" ; Alternatives: - [ ] ☐ – — › 
 	, mark_done: "✔" ; Alternatives: * [x] ✔ ✓ ☑
+	, mark_pending: "✜" ; Alternatives: ☆ ★ ∆ ∇ ❖ ☉ ✜ ☀
 	, mark_cancelled: "✘" ; Alternatives: x [-] ✘ ⛝
 	, mark_project: "{#}" ; Alternatives: ➔ ➤ ■ 
 	, mark_indent: "`t" ; `t = TAB
-	, text_done: "@done" 
+	, text_done: "@done"
+	, text_pending: "@pending"
 	, text_cancelled: "@cancelled"
 	, text_today: "@today"
 	, text_start: "@start"
@@ -47,13 +49,14 @@ objTodo := {filenames: {1: ".todo", 2: ".todolist", 3: ".tasks", 4: ".taskpaper"
 		; Only used for time calculation of time spent on task during @done when @start is present in task
 	, date_options_us: 0 
 		; To correctly calculate (working) time spent on a task you can define the following
-		; settings - consult the time() function for a more detailed explantion:
+		; settings - consult the time() function for a more detailed explanation:
 		; - Units (output units) can be d=days, h=hours, m=minutes, s=seconds
 		; - Params can be W,D,B,H,M,S
 	, date_options_units: "m" ; The time in minutes spent on a task is converted into hours:minutes format so it is advised not to alter this
 	, date_options_params: ""  
 	, delay: 80 ; Delay in milliseconds after each clipboard action
 	, hotkey_task_done: "^d"
+	, hotkey_task_pending: "^+d"
 	, hotkey_task_cancel: "^m"
 	, hotkey_task_new: "^i"
 	, hotkey_task_start: "!s"
@@ -69,16 +72,16 @@ objTodo := {filenames: {1: ".todo", 2: ".todolist", 3: ".tasks", 4: ".taskpaper"
 for k, v in ObjTodo.Filenames
 	GroupAdd, ahkgroupTodo, %v%
 
-Hotkey, IfWinActive, ahk_group ahkgroupTodo
-Hotkey, % objTodo.hotkey_task_done  , todo_hotkey_task_done
-Hotkey, % objTodo.hotkey_task_cancel, todo_hotkey_task_cancel
-Hotkey, % objTodo.hotkey_task_new   , todo_hotkey_task_new
-Hotkey, % objTodo.hotkey_task_start , todo_hotkey_task_start
-Hotkey, % objTodo.hotkey_task_today , todo_hotkey_task_today
-Hotkey, % objTodo.hotkey_make_task  , todo_hotkey_make_task
-Hotkey, % objTodo.hotkey_new_project, todo_hotkey_new_project
-Hotkey, % objTodo.hotkey_archive    , todo_hotkey_archive
-Hotkey, % objTodo.hotkey_help       , todo_hotkey_help
+Hotkey, % objTodo.hotkey_task_done   , todo_hotkey_task_done
+Hotkey, % objTodo.hotkey_task_pending, todo_hotkey_task_pending
+Hotkey, % objTodo.hotkey_task_cancel , todo_hotkey_task_cancel
+Hotkey, % objTodo.hotkey_task_new    , todo_hotkey_task_new
+Hotkey, % objTodo.hotkey_task_start  , todo_hotkey_task_start
+Hotkey, % objTodo.hotkey_task_today  , todo_hotkey_task_today
+Hotkey, % objTodo.hotkey_make_task   , todo_hotkey_make_task
+Hotkey, % objTodo.hotkey_new_project , todo_hotkey_new_project
+Hotkey, % objTodo.hotkey_archive     , todo_hotkey_archive
+Hotkey, % objTodo.hotkey_help        , todo_hotkey_help
 Hotkey, IfWinActive
 
 ; Return ; Return from todo-pt-label - uncomment if you wish to include todo-pt in your main script
@@ -152,6 +155,11 @@ todo_hotkey_task_done:
 	Send % "{home}"
 Return
 
+todo_hotkey_task_pending:
+	todo_Command(objTodo.text_pending)
+	Send % "{home}"
+Return
+
 todo_hotkey_task_today:
 	Send % "{end}{space}"
 	todo_SendClip(objTodo.text_today)
@@ -181,6 +189,8 @@ todo_Command(CommandText) {
 		{
 		 if (CommandText = objTodo.text_done)
 		 	mark:=objTodo.mark_done
+		 else if (CommandText = objTodo.text_pending)
+		 	mark:=objTodo.mark_pending
 		 else if (CommandText = objTodo.text_cancelled)
 		 	mark:=objTodo.mark_cancelled
 		 else if (CommandText = objTodo.text_start)
@@ -210,6 +220,7 @@ todo_CheckMark(mark) {
 	global objTodo
 	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_done "\E\s*","$1")
 	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_open "\E\s*","$1")
+	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_pending "\E\s*","$1")
 	Clipboard:=RegExReplace(Clipboard,"^(\s*)\Q" objTodo.mark_cancelled "\E\s*","$1")
 	Clipboard:=RegExReplace(Clipboard,"^(\s*)","$1" mark " ")
 	}
