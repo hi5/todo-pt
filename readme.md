@@ -1,4 +1,4 @@
-﻿# [todo-pt](https://github.com/hi5/todo-pt) <sub>v0.5</sub>
+﻿# [todo-pt](https://github.com/hi5/todo-pt) <sup>v0.5</sup>
 
 ## Universal TODO lists for Text Editors (based on PlainTasks)
 
